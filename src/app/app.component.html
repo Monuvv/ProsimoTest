@@ -1,0 +1,119 @@
+<div class="container">
+
+  <app-entry *ngIf="selectedId ==''" (setSelectedId)="setSelectedId($event)"></app-entry>
+
+  <div *ngIf="selectedId !=''">
+    <mat-toolbar class="mat-elevation-z8">
+      <button mat-icon-button *ngIf="sidenav.mode === 'over'" (click)="sidenav.toggle()">
+        <mat-icon *ngIf="!sidenav.opened">
+          menu
+        </mat-icon>
+        <mat-icon *ngIf="sidenav.opened">
+          close
+        </mat-icon>
+      </button>
+      <span class="title">Welcome {{selectedId}}</span>
+    </mat-toolbar>
+
+    <mat-sidenav-container>
+      <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8">
+        <h4 class="name">Filter By</h4>
+        <mat-divider></mat-divider>
+
+        <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+          <mat-label>Name</mat-label>
+          <input type="textarea" placeholder="Name" [(ngModel)]="name" formControlName="name" required>
+
+          <div *ngIf="isSubmitted && myForm.name.errors?.required" style="color: red;">
+            <p>Please enter Name</p>
+          </div>
+
+          <mat-label>Price</mat-label>
+          <input style="margin-top: 1em;
+      margin-bottom: 1em;" type="number" placeholder="Price" formControlName="price">
+
+          <mat-form-field style="align-items: center;display: flex; margin-top: 1em;
+        margin-bottom: 1em;">
+            <input style="width: 70%;" placeholder="FromDate" matInput [matDatepicker]="fromD" formControlName="toDate">
+            <mat-datepicker-toggle matSuffix [for]="fromD"></mat-datepicker-toggle>
+            <mat-datepicker #fromD></mat-datepicker>
+          </mat-form-field>
+
+
+          <mat-form-field style="align-items: center;display: flex; margin-top: 1em;
+        margin-bottom: 1em;">
+            <input style="width: 70%;" placeholder="ToDate" matInput [matDatepicker]="toD" formControlName="toDate">
+            <mat-datepicker-toggle matSuffix [for]="toD"></mat-datepicker-toggle>
+            <mat-datepicker #toD></mat-datepicker>
+          </mat-form-field>
+
+          <!-- Showing error method -->
+          <div *ngIf="isSubmitted && myForm.toDate.errors?.required" style="color: red;">
+            <p>Please select at least one date</p>
+          </div>
+
+          <mat-label>Rating</mat-label>
+          <div style="align-items: center;display: flex;justify-content: center; margin-top: 1em;
+      margin-bottom: 1em;">
+            <select matNativeControl (change)="selectRating($event)" style="width: 90%;">
+              <option value="Select"></option>
+              <option *ngFor="let option of rating" [value]="option.value" [selected]="selectedRating === option.value">
+                {{ option.viewValue }}</option>
+            </select>
+          </div>
+
+          <mat-label>Availability</mat-label>
+          <div>
+            <input id="YES" type="radio" value="YES" name="availability" formControlName="availability">
+            <label class="custom-control-label" for="YES">YES</label>
+          </div>
+
+          <div>
+            <input id="NO" type="radio" value="NO" name="availability" formControlName="availability">
+            <label class="custom-control-label" for="NO">NO</label>
+          </div>
+
+          <!-- Showing error method -->
+          <div *ngIf="isSubmitted && myForm.availability.errors?.required" style="color: red;">
+            <p>Please select either value</p>
+          </div>
+          <mat-divider></mat-divider>
+
+          <button mat-raised-button class="menu-button" type="submit">
+            <mat-icon>check</mat-icon>
+            <span>GO</span>
+          </button>
+        </form>
+
+      </mat-sidenav>
+
+      <mat-sidenav-content>
+        <div class="mat-div" fxLayout="row wrap" fxLayout.xs="column" fxLayoutAlign="space-around center">
+          <div style="flex-wrap: wrap;width: 92%;" *ngFor="let member of filterBooks" fxFlex="calc(30%-25px)"
+            fxFlex.sm="calc(50%-25px)">
+            <div>
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title><span style="width:100%">{{member.title}} </span>
+                    <mat-icon [matTooltip]="setHoverInfo(member.availability)">info</mat-icon>
+                  </mat-card-title>
+                </mat-card-header>
+                <div class="resCard"></div>
+                <mat-card-content>
+                  <p>
+                    {{member.content}}
+                  </p>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="card-out">
+              <div class="div1">{{member.price}}$</div>
+              <div class="div2">Rating : {{member.rating}}</div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="filterBooks.length == 0" class="nodata">NO DATA IS THERE</div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>
